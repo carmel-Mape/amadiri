@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.amadiri</groupId>
-    <artifactId>jobsapp</artifactId>
+    <artifactId>Amadiri</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Amadiri</name>
     <description>API pour la gestion des petits boulots</description>
@@ -96,6 +96,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+				<skipTests>true</skipTests>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

@@ -1,4 +1,4 @@
-package com.amadiri.jobsapp;
+package com.example.amadiri;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
