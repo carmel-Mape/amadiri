@@ -35,7 +35,7 @@ public class TaskDTO {
     @Min(value = 0, message = "Le salaire doit être positif")
     private Double salaire;
 
-    private LocalDateTime datePosted;
+    private LocalDateTime createdAt;
 
     // Constructeur pour la création sans id ni date
     public TaskDTO(String title, String description, String location, Double salaire) {

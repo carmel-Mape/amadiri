@@ -20,7 +20,7 @@ public class Task {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, length = 2000)
+    @Column(length = 1000)
     private String description;
 
     @Column(nullable = false)
@@ -29,23 +29,27 @@ public class Task {
     @Column(nullable = false)
     private Double salaire;
 
-    @Column(name = "date_posted", nullable = false)
-    private LocalDateTime datePosted;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
-    // Constructeur avec les champs principaux
-    public Task(String title, String description, String location, Double salaire) {
-        this.title = title;
-        this.description = description;
-        this.location = location;
-        this.salaire = salaire;
-        this.datePosted = LocalDateTime.now();
-    }
+    @Column(name = "due_date")
+    private LocalDateTime dueDate;
 
-    // Méthode appelée avant la persistence pour initialiser la date si nécessaire
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TaskStatus status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id", nullable = false)
+    private User creator;
+
     @PrePersist
     protected void onCreate() {
-        if (datePosted == null) {
-            datePosted = LocalDateTime.now();
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (status == null) {
+            status = TaskStatus.EN_ATTENTE;
         }
     }
 }
