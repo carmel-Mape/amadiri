@@ -30,4 +30,11 @@ public class JwtAuthResponse {
         this.email = email;
         this.isAdmin = isAdmin;
     }
+
+    public JwtAuthResponse(String token, Long userId, String email, boolean isAdmin) {
+        this.token = token;
+        this.userId = userId;
+        this.email = email;
+        this.isAdmin = isAdmin;
+    }
 }
