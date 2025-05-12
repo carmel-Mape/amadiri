@@ -31,7 +31,7 @@ public class AuthService {
     @Autowired
     private JwtUtils jwtUtils;
     
-    public void register(RegisterRequest registerDto) {
+    public User register(RegisterRequest registerDto) {
         // Vérification si l'email existe déjà
         if (userRepository.existsByEmail(registerDto.getEmail())) {
             throw new BadRequestException("Erreur: Cet email est déjà utilisé!");
@@ -41,7 +41,7 @@ public class AuthService {
         User user = userMapper.toEntity(registerDto);
         
         // Sauvegarde de l'utilisateur dans la base de données
-        userRepository.save(user);
+        return userRepository.save(user);
     }
     
     public JwtAuthResponse login(LoginRequest loginDto) {
@@ -59,12 +59,11 @@ public class AuthService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         
         // Création et renvoi de la réponse JWT
-        return new JwtAuthResponse(
-                jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getAuthorities().stream()
-                        .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))
-        );
+        JwtAuthResponse response = new JwtAuthResponse();
+        response.setToken(jwt);
+        response.setUserId(userDetails.getId());
+        response.setEmail(userDetails.getUsername());
+        response.setRole(userDetails.getAuthorities().iterator().next().getAuthority());
+        return response;
     }
 }

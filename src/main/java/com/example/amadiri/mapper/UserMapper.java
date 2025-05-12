@@ -3,6 +3,7 @@ package com.example.amadiri.mapper;
 import com.example.amadiri.DTO.RegisterRequest;
 import com.example.amadiri.DTO.UserDTO;
 import com.example.amadiri.entity.User;
+import com.example.amadiri.entity.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ public class UserMapper {
         user.setPrenom(dto.getPrenom());
         user.setEmail(dto.getEmail());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.addRole(Role.ROLE_USER);
         return user;
     }
     
@@ -28,7 +30,7 @@ public class UserMapper {
         dto.setNom(user.getNom());
         dto.setPrenom(user.getPrenom());
         dto.setEmail(user.getEmail());
-        dto.setAdmin(user.isAdmin());
+        dto.setRole(user.getRoles().iterator().next().name());
         return dto;
     }
 }

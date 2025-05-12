@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
  * Ne contient pas d'informations sensibles comme le mot de passe.
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserDTO {
 
     private Long id;
+    private String email;
     private String nom;
     private String prenom;
-    private String email;
-    private boolean isAdmin;
+    private String role;
 }
