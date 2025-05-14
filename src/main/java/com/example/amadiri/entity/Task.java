@@ -29,11 +29,10 @@ public class Task {
     @Column(nullable = false)
     private Double salaire;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    
+@Column(name = "date_posted", nullable = false)
+private LocalDateTime datePosted;
 
-    @Column(name = "due_date")
-    private LocalDateTime dueDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
