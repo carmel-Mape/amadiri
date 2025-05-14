@@ -38,15 +38,15 @@ public class ApplicationService {
         Long userId = userService.getCurrentUserId();
         Long taskId = applicationCreateDto.getTaskId();
         
-        // Vérification si l'utilisateur a déjà postulé à cette tâche
-        Optional<Application> existingApplication = applicationRepository.findByUserIdAndTaskId(userId, taskId);
-        if (existingApplication.isPresent()) {
-            throw new BadRequestException("Vous avez déjà postulé à cette tâche");
-        }
-        
         // Récupération de l'utilisateur et de la tâche
         User user = userService.getUserEntityById(userId);
         Task task = taskService.getTaskEntityById(taskId);
+        
+        // Vérification si l'utilisateur a déjà postulé à cette tâche
+        Optional<Application> existingApplication = applicationRepository.findByUserAndTask(user, task);
+        if (existingApplication.isPresent()) {
+            throw new BadRequestException("Vous avez déjà postulé à cette tâche");
+        }
         
         // Création de la candidature
         Application application = new Application(user, task);
@@ -64,7 +64,8 @@ public class ApplicationService {
             throw new UnauthorizedException("Vous n'êtes pas autorisé à voir les candidatures de cet utilisateur");
         }
         
-        List<Application> applications = applicationRepository.findByUserId(userId);
+        User user = userService.getUserEntityById(userId);
+        List<Application> applications = applicationRepository.findByUser(user);
         return applicationMapper.toDtoList(applications);
     }
     
@@ -74,7 +75,8 @@ public class ApplicationService {
             throw new UnauthorizedException("Seul un administrateur peut voir toutes les candidatures pour une tâche");
         }
         
-        List<Application> applications = applicationRepository.findByTaskId(taskId);
+        Task task = taskService.getTaskEntityById(taskId);
+        List<Application> applications = applicationRepository.findByTask(task);
         return applicationMapper.toDtoList(applications);
     }
     

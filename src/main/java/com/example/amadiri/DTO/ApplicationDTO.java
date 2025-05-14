@@ -30,5 +30,8 @@ public class ApplicationDTO {
     // Constructeur minimal pour la création d'une candidature
     public ApplicationDTO(Long taskId) {
         this.taskId = taskId;
+   
     }
+
+    
 }

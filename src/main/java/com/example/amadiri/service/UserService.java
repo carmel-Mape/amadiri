@@ -1,48 +1,56 @@
 package com.example.amadiri.service;
 
-import com.example.amadiri.entity.Role;
+import com.example.amadiri.DTO.UserDTO;
 import com.example.amadiri.entity.User;
+import com.example.amadiri.exception.ResourceNotFoundException;
+import com.example.amadiri.mapper.UserMapper;
 import com.example.amadiri.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import com.example.amadiri.security.UserDetailsImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
     
-    private final UserRepository userRepository;
-
-    public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID : " + id));
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private UserMapper userMapper;
+    
+    public UserDTO getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        
+        User user = userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userDetails.getId()));
+        
+        return userMapper.toDto(user);
     }
-
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'email : " + email));
+    
+    public UserDTO getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        
+        return userMapper.toDto(user);
     }
-
+    
     public User getUserEntityById(Long id) {
-        return findById(id);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
     }
-
+    
     public Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("Utilisateur non authentifié");
-        }
-        User user = findByEmail(authentication.getName());
-        return user.getId();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        return userDetails.getId();
     }
-
+    
     public boolean isCurrentUserAdmin() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return false;
-        }
-        User user = findByEmail(authentication.getName());
-        return user.getRoles().contains(Role.ROLE_ADMIN);
+        return authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
     }
 }

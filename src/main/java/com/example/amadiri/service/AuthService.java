@@ -7,7 +7,7 @@ import com.example.amadiri.entity.User;
 import com.example.amadiri.exception.BadRequestException;
 import com.example.amadiri.mapper.UserMapper;
 import com.example.amadiri.repository.UserRepository;
-import com.example.amadiri.security.JwtUtils;
+import com.example.amadiri.config.JwtTokenProvider;
 import com.example.amadiri.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,7 +29,7 @@ public class AuthService {
     private UserMapper userMapper;
     
     @Autowired
-    private JwtUtils jwtUtils;
+    private JwtTokenProvider jwtTokenProvider;
     
     public User register(RegisterRequest registerDto) {
         // Vérification si l'email existe déjà
@@ -53,7 +53,7 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         
         // Génération du token JWT
-        String jwt = jwtUtils.generateJwtToken(authentication);
+        String jwt = jwtTokenProvider.generateToken(authentication);
         
         // Récupération des détails de l'utilisateur
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
