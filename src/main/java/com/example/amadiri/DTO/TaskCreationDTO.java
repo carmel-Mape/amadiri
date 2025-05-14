@@ -1,25 +1,22 @@
 package com.example.amadiri.DTO;
 
+import lombok.Data;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Positive;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class TaskCreationDTO {
-    
     @NotBlank(message = "Le titre est obligatoire")
     private String title;
-    
+
     @NotBlank(message = "La description est obligatoire")
     private String description;
-    
-    @NotBlank(message = "Le lieu est obligatoire")
+
+    @NotBlank(message = "La localisation est obligatoire")
     private String location;
-    
+
     @NotNull(message = "Le salaire est obligatoire")
+    @Positive(message = "Le salaire doit être positif")
     private Double salaire;
 } 

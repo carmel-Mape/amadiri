@@ -1,5 +1,6 @@
 package com.example.amadiri.DTO;
 
+import com.example.amadiri.entity.TaskStatus;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -36,6 +37,12 @@ public class TaskDTO {
     private Double salaire;
 
     private LocalDateTime createdAt;
+    
+    private LocalDateTime dueDate;
+    
+    private TaskStatus status;
+    
+    private Long creatorId;
 
     // Constructeur pour la création sans id ni date
     public TaskDTO(String title, String description, String location, Double salaire) {

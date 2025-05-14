@@ -4,6 +4,7 @@ import com.example.amadiri.DTO.ApplicationDTO;
 import com.example.amadiri.DTO.StatusUpdateRequest;
 import com.example.amadiri.DTO.ApplicationCreateDTO;
 import com.example.amadiri.entity.Application;
+import com.example.amadiri.entity.ApplicationStatus;
 import com.example.amadiri.entity.Task;
 import com.example.amadiri.entity.User;
 import com.example.amadiri.exception.BadRequestException;
@@ -48,11 +49,9 @@ public class ApplicationService {
         Task task = taskService.getTaskEntityById(taskId);
         
         // Création de la candidature
-        Application application = new Application();
-        application.setUser(user);
-        application.setTask(task);
+        Application application = new Application(user, task);
         application.setDateApplied(LocalDateTime.now());
-        application.setStatus(Application.ApplicationStatus.EN_ATTENTE);
+        application.setStatus(ApplicationStatus.EN_ATTENTE);
         
         application = applicationRepository.save(application);
         

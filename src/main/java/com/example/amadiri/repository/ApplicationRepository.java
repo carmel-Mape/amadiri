@@ -16,4 +16,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     List<Application> findByUserAndStatus(User user, ApplicationStatus status);
     Optional<Application> findByUserAndTask(User user, Task task);
     boolean existsByUserAndTask(User user, Task task);
+    
+    // Ajout des méthodes manquantes
+    List<Application> findByUserId(Long userId);
+    List<Application> findByTaskId(Long taskId);
+    Optional<Application> findByUserIdAndTaskId(Long userId, Long taskId);
 } 

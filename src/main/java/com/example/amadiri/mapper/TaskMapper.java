@@ -3,6 +3,7 @@ package com.example.amadiri.mapper;
 import com.example.amadiri.DTO.TaskCreationDTO;
 import com.example.amadiri.DTO.TaskDTO;
 import com.example.amadiri.entity.Task;
+import com.example.amadiri.entity.TaskStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class TaskMapper {
         task.setLocation(dto.getLocation());
         task.setSalaire(dto.getSalaire());
         task.setCreatedAt(LocalDateTime.now());
+        task.setStatus(TaskStatus.EN_ATTENTE);
         return task;
     }
     
@@ -30,6 +32,9 @@ public class TaskMapper {
         dto.setLocation(task.getLocation());
         dto.setSalaire(task.getSalaire());
         dto.setCreatedAt(task.getCreatedAt());
+        dto.setDueDate(task.getDueDate());
+        dto.setStatus(task.getStatus());
+        dto.setCreatorId(task.getCreator() != null ? task.getCreator().getId() : null);
         return dto;
     }
     
