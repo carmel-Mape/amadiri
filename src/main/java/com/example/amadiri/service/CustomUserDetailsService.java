@@ -2,6 +2,8 @@ package com.example.amadiri.service;
 
 import com.example.amadiri.entity.User;
 import com.example.amadiri.repository.UserRepository;
+import com.example.amadiri.security.UserDetailsImpl;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,10 +43,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .collect(Collectors.toList());
 
         // Retourne un objet UserDetails de Spring Security
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                authorities
-        );
+        return UserDetailsImpl.build(user);
+
     }
 }
