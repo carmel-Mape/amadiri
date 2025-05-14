@@ -8,12 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Mapper pour convertir entre l'entité User et les DTOs.
+ */
 @Component
 public class UserMapper {
-    
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
+    /**
+     * Transforme un RegisterRequest en entité User.
+     */
     public User toEntity(RegisterRequest dto) {
         User user = new User();
         user.setNom(dto.getNom());
@@ -23,7 +28,10 @@ public class UserMapper {
         user.addRole(Role.ROLE_USER);
         return user;
     }
-    
+
+    /**
+     * Transforme un User en UserDTO simple.
+     */
     public UserDTO toDto(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
@@ -32,5 +40,13 @@ public class UserMapper {
         dto.setEmail(user.getEmail());
         dto.setRole(user.getRoles().iterator().next().name());
         return dto;
+    }
+
+    /**
+     * Transforme un User en réponse pour l'utilisateur authentifié (/users/me).
+     */
+    public UserDTO mapToUserResponse(User user) {
+        // Réutilise la méthode toDto ou ajoute des champs supplémentaires si besoin
+        return toDto(user);
     }
 }

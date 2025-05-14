@@ -53,4 +53,9 @@ public class UserService {
         return authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
     }
+
+    public UserDTO mapToUserResponse(UserDTO currentUser) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'mapToUserResponse'");
+    }
 }
