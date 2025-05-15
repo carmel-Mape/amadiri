@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import com.example.amadiri.entity.ApplicationStatus;
 
 import com.example.amadiri.entity.Task;
 
@@ -73,5 +74,45 @@ public class Application {
         if (status == null) {
             status = ApplicationStatus.EN_ATTENTE;
         }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+    public LocalDateTime getDateApplied() {
+        return dateApplied;
+    }
+
+    public void setDateApplied(LocalDateTime dateApplied) {
+        this.dateApplied = dateApplied;
+    }
+
+    public ApplicationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ApplicationStatus status) {
+        this.status = status;
     }
 }

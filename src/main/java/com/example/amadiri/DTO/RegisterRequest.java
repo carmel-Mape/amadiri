@@ -6,12 +6,11 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /**
- * DTO pour les requêtes d'inscription d'un nouvel utilisateur.
- * Contient les validations nécessaires pour les champs requis.
+ * DTO pour les requêtes d'inscription.
  */
 @Data
 public class RegisterRequest {
-
+    
     @NotBlank(message = "Le nom est obligatoire")
     private String nom;
 
