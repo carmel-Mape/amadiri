@@ -40,12 +40,13 @@ public class TaskDTO {
     
     private TaskStatus status;
 
-    // Constructeur pour la création sans id
+    // Constructor for creating a new task
     public TaskDTO(String title, String description, String location, Double salaire) {
         this.title = title;
         this.description = description;
         this.location = location;
         this.salaire = salaire;
-        this.status = TaskStatus.EN_ATTENTE;
+        this.datePosted = LocalDateTime.now();
+        this.status = TaskStatus.DISPONIBLE;
     }
 }

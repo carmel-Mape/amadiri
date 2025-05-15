@@ -10,13 +10,13 @@ import java.util.List;
  * Ne contient pas d'informations sensibles comme le mot de passe.
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserDTO {
     private Long id;
-    private String email;
     private String nom;
     private String prenom;
+    private String email;
     private List<String> roles;
     private boolean isAdmin;
 }
