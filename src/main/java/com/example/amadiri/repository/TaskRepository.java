@@ -35,4 +35,12 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
      * @return Liste des tâches correspondantes
      */
     List<Task> findByDatePostedAfter(LocalDateTime date);
+
+
+    // Recherche uniquement par titre (si tu veux chercher sans description)
+List<Task> findByTitleContainingIgnoreCase(String title);
+
+// Recherche des tâches par salaire minimum et maximum
+List<Task> findBySalaireBetween(Double min, Double max);
+
 }

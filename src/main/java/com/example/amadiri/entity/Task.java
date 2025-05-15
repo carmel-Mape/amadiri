@@ -29,10 +29,14 @@ public class Task {
     @Column(nullable = false)
     private Double salaire;
 
-    
-@Column(name = "date_posted", nullable = false)
-private LocalDateTime datePosted;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
+    @Column(name = "due_date")
+    private LocalDateTime dueDate;
+
+    @Column(name = "date_posted", nullable = false)
+    private LocalDateTime datePosted;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -50,5 +54,22 @@ private LocalDateTime datePosted;
         if (status == null) {
             status = TaskStatus.EN_ATTENTE;
         }
+    }
+
+    // --- Getters et Setters explicites pour createdAt et dueDate ---
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDateTime dueDate) {
+        this.dueDate = dueDate;
     }
 }
