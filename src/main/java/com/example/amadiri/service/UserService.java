@@ -55,7 +55,6 @@ public class UserService {
     }
 
     public UserDTO mapToUserResponse(UserDTO currentUser) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'mapToUserResponse'");
+        return currentUser;
     }
 }
