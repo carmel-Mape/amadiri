@@ -3,6 +3,7 @@ package com.example.amadiri.DTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 /**
  * DTO pour les informations d'un utilisateur.
@@ -16,5 +17,6 @@ public class UserDTO {
     private String email;
     private String nom;
     private String prenom;
-    private String role;
+    private List<String> roles;
+    private boolean isAdmin;
 }

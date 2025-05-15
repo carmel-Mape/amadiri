@@ -20,7 +20,6 @@ public class ApplicationDTO {
     private Long userId;
     private String userName;  // Nom complet de l'utilisateur (nom + prénom) pour l'affichage
     
-    @NotNull(message = "L'ID de la tâche est obligatoire")
     private Long taskId;
     private String taskTitle;  // Titre de la tâche pour l'affichage
     

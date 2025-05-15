@@ -1,8 +1,8 @@
 package com.example.amadiri.service;
 
-import com.example.amadiri.dto.AuthResponse;
-import com.example.amadiri.dto.LoginRequest;
-import com.example.amadiri.dto.RegisterRequest;
+import com.example.amadiri.DTO.AuthResponse;
+import com.example.amadiri.DTO.LoginRequest;
+import com.example.amadiri.DTO.RegisterRequest;
 import com.example.amadiri.entity.User;
 import com.example.amadiri.repository.UserRepository;
 import com.example.amadiri.security.JwtTokenProvider;

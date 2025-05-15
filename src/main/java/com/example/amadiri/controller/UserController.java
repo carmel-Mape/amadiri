@@ -1,6 +1,6 @@
 package com.example.amadiri.controller;
 
-import com.example.amadiri.entity.User;
+import com.example.amadiri.DTO.UserDTO;
 import com.example.amadiri.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class UserController {
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<User> getCurrentUser() {
+    public ResponseEntity<UserDTO> getCurrentUser() {
         return ResponseEntity.ok(userService.getCurrentUser());
     }
 }

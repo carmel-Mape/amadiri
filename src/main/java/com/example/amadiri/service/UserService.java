@@ -2,11 +2,8 @@ package com.example.amadiri.service;
 
 import com.example.amadiri.DTO.UserDTO;
 import com.example.amadiri.entity.User;
-import com.example.amadiri.entity.Role;
 import com.example.amadiri.exception.ResourceNotFoundException;
-import com.example.amadiri.mapper.UserMapper;
 import com.example.amadiri.repository.UserRepository;
-import com.example.amadiri.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,27 +16,18 @@ public class UserService {
     
     private final UserRepository userRepository;
     
-    private final UserMapper userMapper;
-    
     public UserDTO getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
-        
-        return userMapper.toDto(user);
+        return convertToDTO(user);
     }
     
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
-        
-        return userMapper.toDto(user);
-    }
-    
-    public User getUserEntityById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        return convertToDTO(user);
     }
     
     public Long getCurrentUserId() {
@@ -50,14 +38,22 @@ public class UserService {
         return getCurrentUser().isAdmin();
     }
 
-    public UserDTO mapToUserResponse(UserDTO currentUser) {
-        return currentUser;
-    }
-
     @Transactional
     public void promoteToAdmin(Long userId) {
-        User user = getUserEntityById(userId);
-        user.addRole(Role.ROLE_ADMIN);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+        user.addRole("ROLE_ADMIN");
         userRepository.save(user);
+    }
+
+    private UserDTO convertToDTO(User user) {
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setNom(user.getNom());
+        dto.setPrenom(user.getPrenom());
+        dto.setEmail(user.getEmail());
+        dto.setRoles(user.getRoles());
+        dto.setAdmin(user.isAdmin());
+        return dto;
     }
 }

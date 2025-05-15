@@ -1,6 +1,6 @@
 package com.example.amadiri.controller;
 
-import com.example.amadiri.entity.Application;
+import com.example.amadiri.DTO.ApplicationDTO;
 import com.example.amadiri.entity.ApplicationStatus;
 import com.example.amadiri.service.ApplicationService;
 import lombok.RequiredArgsConstructor;
@@ -19,26 +19,26 @@ public class ApplicationController {
     private final ApplicationService applicationService;
 
     @PostMapping
-    public ResponseEntity<Application> apply(
+    public ResponseEntity<ApplicationDTO> apply(
             @RequestParam Long userId,
             @RequestParam Long taskId) {
         return ResponseEntity.ok(applicationService.apply(userId, taskId));
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Application>> getUserApplications(@PathVariable Long userId) {
+    public ResponseEntity<List<ApplicationDTO>> getUserApplications(@PathVariable Long userId) {
         return ResponseEntity.ok(applicationService.getUserApplications(userId));
     }
 
     @GetMapping("/task/{taskId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<Application>> getTaskApplications(@PathVariable Long taskId) {
+    public ResponseEntity<List<ApplicationDTO>> getTaskApplications(@PathVariable Long taskId) {
         return ResponseEntity.ok(applicationService.getTaskApplications(taskId));
     }
 
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Application> updateStatus(
+    public ResponseEntity<ApplicationDTO> updateStatus(
             @PathVariable Long id,
             @RequestParam ApplicationStatus status) {
         return ResponseEntity.ok(applicationService.updateStatus(id, status));

@@ -1,8 +1,8 @@
 package com.example.amadiri.controller;
 
-import com.example.amadiri.dto.AuthResponse;
-import com.example.amadiri.dto.LoginRequest;
-import com.example.amadiri.dto.RegisterRequest;
+import com.example.amadiri.DTO.AuthResponse;
+import com.example.amadiri.DTO.LoginRequest;
+import com.example.amadiri.DTO.RegisterRequest;
 import com.example.amadiri.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
