@@ -1,7 +1,6 @@
 package com.example.amadiri.config;
 
-import com.example.amadiri.security.AuthEntryPointJwt;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,45 +16,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 /**
  * Configuration de la sécurité de l'application.
- * Définit les règles d'accès aux différentes ressources et configure l'authentification.
+ * Définit les règles d'accès aux différentes URLs et configure l'authentification JWT.
  */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final AuthEntryPointJwt unauthorizedHandler;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthFilter;
+
+    @Autowired
+    private AuthEntryPointJwt unauthorizedHandler;
 
     /**
-     * Configure la chaîne de filtres de sécurité.
-     * 
-     * @param http Configuration de la sécurité HTTP
-     * @return La chaîne de filtres configurée
-     * @throws Exception En cas d'erreur lors de la configuration
-     */
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
-                .anyRequest().authenticated()
-            );
-        
-        // Ajoute notre filtre JWT avant le filtre standard d'authentification
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        
-        return http.build();
-    }
-
-    /**
-     * Définit l'encodeur de mot de passe à utiliser.
-     * 
-     * @return L'encodeur de mot de passe BCrypt
+     * Configure l'encodeur de mot de passe.
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -64,13 +39,30 @@ public class SecurityConfig {
 
     /**
      * Configure le gestionnaire d'authentification.
-     * 
-     * @param config Configuration d'authentification
-     * @return Le gestionnaire d'authentification
-     * @throws Exception En cas d'erreur lors de la configuration
      */
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
+    /**
+     * Configure les règles de sécurité HTTP.
+     */
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> 
+                auth.requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/tasks").permitAll()
+                    .requestMatchers("/tasks/{id}").permitAll()
+                    .anyRequest().authenticated()
+            );
+
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 }
