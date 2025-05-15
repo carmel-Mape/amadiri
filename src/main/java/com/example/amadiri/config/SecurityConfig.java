@@ -1,5 +1,6 @@
 package com.example.amadiri.config;
 
+import com.example.amadiri.security.AuthEntryPointJwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

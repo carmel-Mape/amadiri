@@ -3,7 +3,8 @@ package com.example.amadiri.config;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,17 +14,19 @@ import java.security.Key;
 import java.util.Date;
 
 /**
- * Service responsable de la génération et validation des tokens JWT.
+ * Fournisseur de tokens JWT.
+ * Gère la génération et la validation des tokens JWT.
  */
 @Component
-@Slf4j
 public class JwtTokenProvider {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
     @Value("${app.jwt.expiration}")
-    private int jwtExpirationInMs;
+    private int jwtExpirationMs;
 
     // Clé de signature générée à partir du secret
     private Key getSigningKey() {
@@ -40,7 +43,7 @@ public class JwtTokenProvider {
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
         
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
         
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
@@ -80,15 +83,15 @@ public class JwtTokenProvider {
                 .parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {
-            log.error("Signature JWT invalide");
+            logger.error("Signature JWT invalide");
         } catch (MalformedJwtException ex) {
-            log.error("Token JWT invalide");
+            logger.error("Token JWT invalide");
         } catch (ExpiredJwtException ex) {
-            log.error("Token JWT expiré");
+            logger.error("Token JWT expiré");
         } catch (UnsupportedJwtException ex) {
-            log.error("Token JWT non supporté");
+            logger.error("Token JWT non supporté");
         } catch (IllegalArgumentException ex) {
-            log.error("La chaîne de revendications JWT est vide");
+            logger.error("JWT claims string est vide");
         }
         return false;
     }
