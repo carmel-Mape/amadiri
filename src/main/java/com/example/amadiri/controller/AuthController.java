@@ -1,10 +1,11 @@
 package com.example.amadiri.controller;
 
-import com.example.amadiri.DTO.LoginRequest;
-import com.example.amadiri.DTO.RegisterRequest;
+import com.example.amadiri.dto.AuthResponse;
+import com.example.amadiri.dto.LoginRequest;
+import com.example.amadiri.dto.RegisterRequest;
 import com.example.amadiri.service.AuthService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,32 +14,32 @@ import org.springframework.web.bind.annotation.*;
  * Fournit les endpoints pour l'inscription et la connexion.
  */
 @RestController
-@RequestMapping("/auth")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
     /**
      * Endpoint d'inscription d'un nouvel utilisateur.
      * 
-     * @param registerRequest DTO contenant les informations d'inscription
+     * @param request DTO contenant les informations d'inscription
      * @return ResponseEntity contenant le token JWT si l'inscription réussit
      */
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
-        return authService.register(registerRequest);
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(authService.register(request));
     }
 
     /**
      * Endpoint de connexion d'un utilisateur.
      * 
-     * @param loginRequest DTO contenant les informations de connexion
+     * @param request DTO contenant les informations de connexion
      * @return ResponseEntity contenant le token JWT si la connexion réussit
      */
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        return authService.login(loginRequest);
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
     }
 }

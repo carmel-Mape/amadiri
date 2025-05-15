@@ -1,12 +1,9 @@
 package com.example.amadiri.controller;
 
-import com.example.amadiri.DTO.TaskDTO;
-import com.example.amadiri.DTO.TaskCreationDTO;
+import com.example.amadiri.entity.Task;
 import com.example.amadiri.service.TaskService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,8 +13,8 @@ import java.util.List;
  * Fournit les endpoints pour créer, lire, modifier et supprimer des tâches.
  */
 @RestController
-@RequestMapping("/tasks")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@RequestMapping("/api/tasks")
+@CrossOrigin(origins = "*")
 public class TaskController {
 
     @Autowired
@@ -28,7 +25,7 @@ public class TaskController {
      * Accessible à tous les utilisateurs.
      */
     @GetMapping
-    public List<TaskDTO> getAllTasks() {
+    public List<Task> getAllTasks() {
         return taskService.getAllTasks();
     }
 
@@ -37,8 +34,10 @@ public class TaskController {
      * Accessible à tous les utilisateurs.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
-        return ResponseEntity.ok(taskService.getTaskById(id));
+    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+        return taskService.getTaskById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     /**
@@ -46,9 +45,8 @@ public class TaskController {
      * Accessible uniquement aux administrateurs.
      */
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<TaskDTO> createTask(@Valid @RequestBody TaskCreationDTO taskCreateDto) {
-        return ResponseEntity.ok(taskService.createTask(taskCreateDto));
+    public Task createTask(@RequestBody Task task) {
+        return taskService.createTask(task);
     }
 
     /**
@@ -56,9 +54,13 @@ public class TaskController {
      * Accessible uniquement aux administrateurs.
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id, @Valid @RequestBody TaskCreationDTO taskUpdateDto) {
-        return ResponseEntity.ok(taskService.updateTask(id, taskUpdateDto));
+    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task taskDetails) {
+        try {
+            Task updatedTask = taskService.updateTask(id, taskDetails);
+            return ResponseEntity.ok(updatedTask);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /**
@@ -66,10 +68,13 @@ public class TaskController {
      * Accessible uniquement aux administrateurs.
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
-        return ResponseEntity.ok().build();
+        try {
+            taskService.deleteTask(id);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /**
@@ -77,8 +82,8 @@ public class TaskController {
      * Accessible à tous les utilisateurs.
      */
     @GetMapping("/search")
-    public List<TaskDTO> searchTasks(@RequestParam String title) {
-        return taskService.searchTasksByTitle(title);
+    public List<Task> searchTasks(@RequestParam String keyword) {
+        return taskService.searchTasks(keyword);
     }
 
     /**
@@ -86,8 +91,8 @@ public class TaskController {
      * Accessible à tous les utilisateurs.
      */
     @GetMapping("/search/location")
-    public List<TaskDTO> searchTasksByLocation(@RequestParam String location) {
-        return taskService.searchTasksByLocation(location);
+    public List<Task> searchByLocation(@RequestParam String location) {
+        return taskService.searchByLocation(location);
     }
 
     /**
@@ -95,9 +100,9 @@ public class TaskController {
      * Accessible à tous les utilisateurs.
      */
     @GetMapping("/search/salary")
-    public List<TaskDTO> searchTasksBySalaryRange(
+    public List<Task> searchBySalaryRange(
             @RequestParam Double min,
             @RequestParam Double max) {
-        return taskService.searchTasksBySalaryRange(min, max);
+        return taskService.searchBySalaryRange(min, max);
     }
 }

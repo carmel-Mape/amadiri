@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tasks")
@@ -29,15 +28,20 @@ public class Task {
     @Column(nullable = false)
     private Double salaire;
 
-    @Column(name = "date_posted", nullable = false, updatable = false)
-    private LocalDateTime datePosted;
+    @Column(name = "created_at")
+    private java.time.LocalDateTime createdAt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TaskStatus status = TaskStatus.EN_ATTENTE;
+    @Column(name = "updated_at")
+    private java.time.LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
-        datePosted = LocalDateTime.now();
+        createdAt = java.time.LocalDateTime.now();
+        updatedAt = createdAt;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = java.time.LocalDateTime.now();
     }
 }

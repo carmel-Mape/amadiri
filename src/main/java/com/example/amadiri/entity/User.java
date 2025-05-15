@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entité JPA représentant un utilisateur dans le système.
@@ -35,9 +35,10 @@ public class User {
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    @Enumerated(EnumType.STRING)
-    private Set<Role> roles = new HashSet<>();
+    private List<String> roles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Application> applications = new ArrayList<>();
 
     // Constructeur avec les champs principaux
     public User(String nom, String prenom, String email, String password) {
@@ -45,16 +46,16 @@ public class User {
         this.prenom = prenom;
         this.email = email;
         this.password = password;
-        this.roles = new HashSet<>();
+        this.roles = new ArrayList<>();
     }
 
     // Méthode utilitaire pour vérifier si l'utilisateur est un administrateur
     public boolean isAdmin() {
-        return roles.contains(Role.ROLE_ADMIN);
+        return roles.contains("ROLE_ADMIN");
     }
 
     // Méthode pour ajouter un rôle
-    public void addRole(Role role) {
+    public void addRole(String role) {
         this.roles.add(role);
     }
 }

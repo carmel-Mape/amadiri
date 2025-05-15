@@ -1,4 +1,3 @@
-
 package com.example.amadiri.repository;
 
 import com.example.amadiri.entity.Application;
@@ -58,4 +57,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
      * @return true si la candidature existe, false sinon
      */
     boolean existsByUserAndTask(User user, Task task);
+
+    List<Application> findByUserId(Long userId);
+    List<Application> findByTaskId(Long taskId);
+    boolean existsByUserIdAndTaskId(Long userId, Long taskId);
 }

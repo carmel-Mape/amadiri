@@ -12,18 +12,22 @@ import com.example.amadiri.exception.ResourceNotFoundException;
 import com.example.amadiri.exception.UnauthorizedException;
 import com.example.amadiri.mapper.ApplicationMapper;
 import com.example.amadiri.repository.ApplicationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.amadiri.repository.TaskRepository;
+import com.example.amadiri.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ApplicationService {
     
-    @Autowired
-    private ApplicationRepository applicationRepository;
+    private final ApplicationRepository applicationRepository;
+    private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
     
     @Autowired
     private UserService userService;
@@ -34,65 +38,43 @@ public class ApplicationService {
     @Autowired
     private ApplicationMapper applicationMapper;
     
-    public ApplicationDTO applyForTask(ApplicationCreateDTO applicationCreateDto) {
-        Long userId = userService.getCurrentUserId();
-        Long taskId = applicationCreateDto.getTaskId();
-        
-        // Récupération de l'utilisateur et de la tâche
-        User user = userService.getUserEntityById(userId);
-        Task task = taskService.getTaskEntityById(taskId);
-        
-        // Vérification si l'utilisateur a déjà postulé à cette tâche
-        Optional<Application> existingApplication = applicationRepository.findByUserAndTask(user, task);
-        if (existingApplication.isPresent()) {
-            throw new BadRequestException("Vous avez déjà postulé à cette tâche");
+    @Transactional
+    public Application apply(Long userId, Long taskId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+            
+        Task task = taskRepository.findById(taskId)
+            .orElseThrow(() -> new RuntimeException("Tâche non trouvée"));
+
+        if (applicationRepository.existsByUserIdAndTaskId(userId, taskId)) {
+            throw new RuntimeException("Vous avez déjà postulé à cette tâche");
         }
-        
-        // Création de la candidature
+
         Application application = new Application(user, task);
-        application.setDateApplied(LocalDateTime.now());
-        application.setStatus(ApplicationStatus.EN_ATTENTE);
-        
-        application = applicationRepository.save(application);
-        
-        return applicationMapper.toDto(application);
+        return applicationRepository.save(application);
     }
     
-    public List<ApplicationDTO> getUserApplications(Long userId) {
-        // Vérification des permissions (un utilisateur ne peut voir que ses propres candidatures)
-        if (!userService.getCurrentUserId().equals(userId) && !userService.isCurrentUserAdmin()) {
-            throw new UnauthorizedException("Vous n'êtes pas autorisé à voir les candidatures de cet utilisateur");
+    public List<Application> getUserApplications(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("Utilisateur non trouvé");
         }
-        
-        User user = userService.getUserEntityById(userId);
-        List<Application> applications = applicationRepository.findByUser(user);
-        return applicationMapper.toDtoList(applications);
+        return applicationRepository.findByUserId(userId);
     }
     
-    public List<ApplicationDTO> getTaskApplications(Long taskId) {
-        // Vérification des permissions (seul un admin peut voir toutes les candidatures pour une tâche)
-        if (!userService.isCurrentUserAdmin()) {
-            throw new UnauthorizedException("Seul un administrateur peut voir toutes les candidatures pour une tâche");
+    public List<Application> getTaskApplications(Long taskId) {
+        if (!taskRepository.existsById(taskId)) {
+            throw new RuntimeException("Tâche non trouvée");
         }
-        
-        Task task = taskService.getTaskEntityById(taskId);
-        List<Application> applications = applicationRepository.findByTask(task);
-        return applicationMapper.toDtoList(applications);
+        return applicationRepository.findByTaskId(taskId);
     }
     
-    public ApplicationDTO updateApplicationStatus(Long applicationId, StatusUpdateRequest statusUpdateDto) {
-        // Vérification des permissions (seul un admin peut mettre à jour le statut d'une candidature)
-        if (!userService.isCurrentUserAdmin()) {
-            throw new UnauthorizedException("Seul un administrateur peut mettre à jour le statut d'une candidature");
-        }
-        
+    @Transactional
+    public Application updateStatus(Long applicationId, ApplicationStatus newStatus) {
         Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Application", "id", applicationId));
-        
-        application.setStatus(statusUpdateDto.getStatus());
-        application = applicationRepository.save(application);
-        
-        return applicationMapper.toDto(application);
+            .orElseThrow(() -> new RuntimeException("Candidature non trouvée"));
+            
+        application.setStatus(newStatus);
+        return applicationRepository.save(application);
     }
     
     public ApplicationDTO getApplicationById(Long id) {
