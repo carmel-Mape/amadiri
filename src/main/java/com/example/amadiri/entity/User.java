@@ -4,12 +4,13 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Entité JPA représentant un utilisateur dans le système.
- * Stocke les informations de base de l'utilisateur et son rôle.
+ * Stocke les informations de base de l'utilisateur, son rôle et sa date de création.
  */
 @Entity
 @Table(name = "users")
@@ -34,6 +35,13 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    /**
+     * Date de création du compte utilisateur.
+     * Cette date est automatiquement définie lors de la création et ne peut pas être modifiée.
+     */
+    @Column(name = "date_created", nullable = false, updatable = false)
+    private LocalDateTime dateCreated;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
@@ -56,5 +64,16 @@ public class User {
     // Méthode pour ajouter un rôle
     public void addRole(Role role) {
         this.roles.add(role);
+    }
+
+    /**
+     * Méthode appelée automatiquement avant la persistance de l'entité.
+     * Initialise la date de création si elle n'est pas déjà définie.
+     */
+    @PrePersist
+    protected void onCreate() {
+        if (dateCreated == null) {
+            dateCreated = LocalDateTime.now();
+        }
     }
 }

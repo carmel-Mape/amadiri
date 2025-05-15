@@ -28,30 +28,16 @@ public class Task {
 
     @Column(nullable = false)
     private Double salaire;
-    
- private LocalDateTime createdAt;
-    private LocalDateTime dueDate;
 
-    
-@Column(name = "date_posted", nullable = false)
-private LocalDateTime datePosted;
-
+    @Column(name = "date_posted", nullable = false, updatable = false)
+    private LocalDateTime datePosted;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TaskStatus status;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id", nullable = false)
-    private User creator;
+    private TaskStatus status = TaskStatus.EN_ATTENTE;
 
     @PrePersist
     protected void onCreate() {
-        if (createdAt == null) {
-            createdAt = LocalDateTime.now();
-        }
-        if (status == null) {
-            status = TaskStatus.EN_ATTENTE;
-        }
+        datePosted = LocalDateTime.now();
     }
 }

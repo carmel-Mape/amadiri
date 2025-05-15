@@ -3,7 +3,6 @@ package com.example.amadiri.repository;
 import com.example.amadiri.entity.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -27,20 +26,10 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
      * @return Liste des tâches correspondantes
      */
     List<Task> findByLocationContainingIgnoreCase(String location);
-    
-    /**
-     * Recherche des tâches postées après une certaine date.
-     * 
-     * @param date Date minimum de publication
-     * @return Liste des tâches correspondantes
-     */
-    List<Task> findByDatePostedAfter(LocalDateTime date);
-
 
     // Recherche uniquement par titre (si tu veux chercher sans description)
-List<Task> findByTitleContainingIgnoreCase(String title);
+    List<Task> findByTitleContainingIgnoreCase(String title);
 
-// Recherche des tâches par salaire minimum et maximum
-List<Task> findBySalaireBetween(Double min, Double max);
-
+    // Recherche des tâches par salaire minimum et maximum
+    List<Task> findBySalaireBetween(Double min, Double max);
 }

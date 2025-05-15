@@ -35,20 +35,17 @@ public class TaskDTO {
     @NotNull(message = "Le salaire est obligatoire")
     @Min(value = 0, message = "Le salaire doit être positif")
     private Double salaire;
-
-    private LocalDateTime createdAt;
     
-    private LocalDateTime dueDate;
+    private LocalDateTime datePosted;
     
     private TaskStatus status;
-    
-    private Long creatorId;
 
-    // Constructeur pour la création sans id ni date
+    // Constructeur pour la création sans id
     public TaskDTO(String title, String description, String location, Double salaire) {
         this.title = title;
         this.description = description;
         this.location = location;
         this.salaire = salaire;
+        this.status = TaskStatus.EN_ATTENTE;
     }
 }
