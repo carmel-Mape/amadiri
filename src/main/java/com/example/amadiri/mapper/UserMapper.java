@@ -42,7 +42,6 @@ public class UserMapper {
         dto.setPrenom(user.getPrenom());
         dto.setEmail(user.getEmail());
         dto.setRole(user.getRoles().iterator().next().name());
-        dto.setDateCreated(user.getDateCreated());
         return dto;
     }
 
