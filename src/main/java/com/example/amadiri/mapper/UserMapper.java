@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Mapper pour convertir entre l'entité User et les DTOs.
+ * Gère la conversion des données utilisateur tout en assurant la sécurité des informations sensibles.
  */
 @Component
 public class UserMapper {
@@ -18,6 +19,7 @@ public class UserMapper {
 
     /**
      * Transforme un RegisterRequest en entité User.
+     * Encode le mot de passe et initialise les rôles de base.
      */
     public User toEntity(RegisterRequest dto) {
         User user = new User();
@@ -30,7 +32,8 @@ public class UserMapper {
     }
 
     /**
-     * Transforme un User en UserDTO simple.
+     * Transforme un User en UserDTO.
+     * Exclut les informations sensibles comme le mot de passe.
      */
     public UserDTO toDto(User user) {
         UserDTO dto = new UserDTO();
@@ -39,14 +42,15 @@ public class UserMapper {
         dto.setPrenom(user.getPrenom());
         dto.setEmail(user.getEmail());
         dto.setRole(user.getRoles().iterator().next().name());
+        dto.setDateCreated(user.getDateCreated());
         return dto;
     }
 
     /**
      * Transforme un User en réponse pour l'utilisateur authentifié (/users/me).
+     * Réutilise la méthode toDto standard.
      */
     public UserDTO mapToUserResponse(User user) {
-        // Réutilise la méthode toDto ou ajoute des champs supplémentaires si besoin
         return toDto(user);
     }
 }
