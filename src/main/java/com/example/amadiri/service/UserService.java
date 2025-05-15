@@ -7,27 +7,25 @@ import com.example.amadiri.exception.ResourceNotFoundException;
 import com.example.amadiri.mapper.UserMapper;
 import com.example.amadiri.repository.UserRepository;
 import com.example.amadiri.security.UserDetailsImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
     
     public UserDTO getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        
-        User user = userRepository.findById(userDetails.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userDetails.getId()));
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
         
         return userMapper.toDto(user);
     }
@@ -45,15 +43,11 @@ public class UserService {
     }
     
     public Long getCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        return userDetails.getId();
+        return getCurrentUser().getId();
     }
     
     public boolean isCurrentUserAdmin() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+        return getCurrentUser().isAdmin();
     }
 
     public UserDTO mapToUserResponse(UserDTO currentUser) {
