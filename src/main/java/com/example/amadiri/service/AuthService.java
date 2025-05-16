@@ -5,7 +5,7 @@ import com.example.amadiri.DTO.LoginRequest;
 import com.example.amadiri.DTO.RegisterRequest;
 import com.example.amadiri.entity.User;
 import com.example.amadiri.repository.UserRepository;
-import com.example.amadiri.security.JwtTokenProvider;
+import com.example.amadiri.config.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -1,6 +1,5 @@
 package com.example.amadiri.config;
 
-import com.example.amadiri.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

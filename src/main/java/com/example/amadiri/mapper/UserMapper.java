@@ -7,6 +7,7 @@ import com.example.amadiri.entity.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import java.util.List;
 
 /**
  * Mapper pour convertir entre l'entité User et les DTOs.
@@ -27,7 +28,7 @@ public class UserMapper {
         user.setPrenom(dto.getPrenom());
         user.setEmail(dto.getEmail());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.addRole(Role.ROLE_USER);
+        user.addRole("ROLE_USER");
         return user;
     }
 
@@ -41,7 +42,8 @@ public class UserMapper {
         dto.setNom(user.getNom());
         dto.setPrenom(user.getPrenom());
         dto.setEmail(user.getEmail());
-        dto.setRole(user.getRoles().iterator().next().name());
+        dto.setRoles(user.getRoles());
+        dto.setAdmin(user.isAdmin());
         return dto;
     }
 

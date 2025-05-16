@@ -23,6 +23,12 @@ public class Task {
     @Column(nullable = false)
     private Double salaire;
 
+    @Column(name = "date_posted")
+    private LocalDateTime datePosted;
+
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -79,6 +85,22 @@ public class Task {
         this.salaire = salaire;
     }
 
+    public LocalDateTime getDatePosted() {
+        return datePosted;
+    }
+
+    public void setDatePosted(LocalDateTime datePosted) {
+        this.datePosted = datePosted;
+    }
+
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -97,6 +119,8 @@ public class Task {
 
     @PrePersist
     protected void onCreate() {
+        datePosted = LocalDateTime.now();
+        status = TaskStatus.EN_ATTENTE;
         createdAt = LocalDateTime.now();
         updatedAt = createdAt;
     }

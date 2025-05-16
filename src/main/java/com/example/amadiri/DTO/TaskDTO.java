@@ -47,6 +47,6 @@ public class TaskDTO {
         this.location = location;
         this.salaire = salaire;
         this.datePosted = LocalDateTime.now();
-        this.status = TaskStatus.DISPONIBLE;
+        this.status = TaskStatus.EN_ATTENTE;
     }
 }
