@@ -17,6 +17,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Filtre pour l'authentification JWT.
@@ -26,6 +28,15 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    
+    // Liste des chemins publics qui ne nécessitent pas d'authentification
+    private static final List<String> PUBLIC_PATHS = Arrays.asList(
+        "/api/auth/login",
+        "/api/auth/register",
+        "/api/tasks",
+        "/swagger-ui",
+        "/v3/api-docs"
+    );
 
     @Autowired
     private JwtTokenProvider tokenProvider;
@@ -37,20 +48,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
+            // Skip authentication for public paths
+            if (isPublicPath(request.getServletPath())) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 String username = tokenProvider.getUsernameFromJWT(jwt);
+                
+                if (username != null) {
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    logger.debug("Set authentication for user: {}", username);
+                }
             }
         } catch (Exception ex) {
-            logger.error("Impossible de définir l'authentification de l'utilisateur", ex);
+            logger.error("Cannot set user authentication: {}", ex.getMessage());
         }
 
         filterChain.doFilter(request, response);
@@ -68,5 +88,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    private boolean isPublicPath(String servletPath) {
+        return PUBLIC_PATHS.stream()
+                .anyMatch(path -> servletPath.startsWith(path));
     }
 }
