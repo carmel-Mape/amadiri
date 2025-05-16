@@ -20,28 +20,46 @@ public class ApplicationController {
     private final ApplicationService applicationService;
 
     @PostMapping
-    public ResponseEntity<Application> apply(
-            @RequestParam Long userId,
-            @RequestParam Long taskId) {
-        return ResponseEntity.ok(applicationService.apply(userId, taskId));
+    public ResponseEntity<?> apply(@RequestBody ApplicationDTO applicationDTO) {
+        try {
+            Application application = applicationService.apply(applicationDTO.getUserId(), applicationDTO.getTaskId());
+            return ResponseEntity.ok(application);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Application>> getUserApplications(@PathVariable Long userId) {
-        return ResponseEntity.ok(applicationService.getUserApplications(userId));
+    public ResponseEntity<?> getUserApplications(@PathVariable Long userId) {
+        try {
+            List<Application> applications = applicationService.getUserApplications(userId);
+            return ResponseEntity.ok(applications);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/task/{taskId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<Application>> getTaskApplications(@PathVariable Long taskId) {
-        return ResponseEntity.ok(applicationService.getTaskApplications(taskId));
+    public ResponseEntity<?> getTaskApplications(@PathVariable Long taskId) {
+        try {
+            List<Application> applications = applicationService.getTaskApplications(taskId);
+            return ResponseEntity.ok(applications);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Application> updateStatus(
+    public ResponseEntity<?> updateStatus(
             @PathVariable Long id,
             @RequestParam ApplicationStatus status) {
-        return ResponseEntity.ok(applicationService.updateStatus(id, status));
+        try {
+            Application application = applicationService.updateStatus(id, status);
+            return ResponseEntity.ok(application);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
