@@ -6,8 +6,6 @@ import com.example.amadiri.DTO.RegisterRequest;
 import com.example.amadiri.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private final AuthService authService;
 
     /**
@@ -32,16 +29,7 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        logger.info("Tentative d'inscription pour l'email: {}", request.getEmail());
-        try {
-            AuthResponse response = authService.register(request);
-            logger.info("Inscription réussie pour l'email: {}", request.getEmail());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            logger.error("Échec de l'inscription pour l'email: {}, erreur: {}", 
-                request.getEmail(), e.getMessage());
-            throw e;
-        }
+        return ResponseEntity.ok(authService.register(request));
     }
 
     /**
@@ -52,15 +40,6 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        logger.info("Tentative de connexion pour l'email: {}", request.getEmail());
-        try {
-            AuthResponse response = authService.login(request);
-            logger.info("Connexion réussie pour l'email: {}", request.getEmail());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            logger.error("Échec de la connexion pour l'email: {}, erreur: {}", 
-                request.getEmail(), e.getMessage());
-            throw e;
-        }
+        return ResponseEntity.ok(authService.login(request));
     }
 }
