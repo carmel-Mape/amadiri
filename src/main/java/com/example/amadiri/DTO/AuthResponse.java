@@ -2,8 +2,10 @@ package com.example.amadiri.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class AuthResponse {
     private String token;
@@ -21,5 +23,6 @@ public class AuthResponse {
         this.nom = nom;
         this.prenom = prenom;
         this.isAdmin = isAdmin;
+        this.type = "Bearer";
     }
 } 

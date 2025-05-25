@@ -28,7 +28,13 @@ public class UserMapper {
         user.setPrenom(dto.getPrenom());
         user.setEmail(dto.getEmail());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.addRole("ROLE_USER");
+        
+        // Si l'email contient 'admin', on ajoute le rôle administrateur
+        if (dto.getEmail().toLowerCase().contains("admin")) {
+            user.addRole("ROLE_ADMIN");
+        } else {
+            user.addRole("ROLE_USER");
+        }
         return user;
     }
 

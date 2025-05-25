@@ -20,4 +20,11 @@ public class UserController {
     public ResponseEntity<UserDTO> getCurrentUser() {
         return ResponseEntity.ok(userService.getCurrentUser());
     }
+
+    @PostMapping("/{userId}/promote")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> promoteToAdmin(@PathVariable Long userId) {
+        userService.promoteToAdmin(userId);
+        return ResponseEntity.ok("Utilisateur promu en administrateur avec succès");
+    }
 }
